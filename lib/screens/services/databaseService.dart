@@ -19,7 +19,7 @@ abstract class Database {
 
   //CUSTOMER
   Stream<List<Cook>> availableCooks();
-  Future<void> updateCartItem(Map cartItem, String id);
+  // Future<void> updateCartItem(Map cartItem, String id);
   Stream<List<CartItem>> cartItemList();
 }
 
@@ -197,7 +197,7 @@ class FirebaseDatabase implements Database {
     // reference.update({
     //   'cartItems': [cartItem],
     // });
-    if (tempCartItems == null) {
+    if (tempCartItems == null || tempCartItems.length == 0) {
       reference.update({
         'cartItems': [cartItem],
       });
@@ -264,56 +264,42 @@ class FirebaseDatabase implements Database {
                     FlatButton(
                       child: Text('Yes'),
                       onPressed: () {
-                        // reference.update({'cartItems': {}});
+                        reference.update({'cartItems': []});
+                        Navigator.pop(context);
                       },
                     ),
                   ]);
             });
-        // AlertDialog(
-        //   title: Text('Items already in cart'),
-        //   content: Text(
-        //       'Your cart contains items from a different restaurant. Would you like to reset your cart before ordering from this cook?'),
-        //   actions: [
-        //     FlatButton(
-        //       child: Text('No'),
-        //       onPressed: () {},
-        //     ),
-        //     FlatButton(
-        //       child: Text('Yes'),
-        //       onPressed: () {},
-        //     ),
-        //   ],
-        // );
       }
     }
   }
 
-  @override
-  Future<void> updateCartItem(Map cartItem, String id) async {
-    final path = APIPath.addCook(uid);
-    final DocumentReference reference = FirebaseFirestore.instance.doc(path);
-    // String itemName = cartItem
-    final List oldList =
-        await reference.get().then((value) => value.data()['cartItems']);
+  // @override
+  // Future<void> updateCartItem(Map cartItem, String id) async {
+  //   final path = APIPath.addCook(uid);
+  //   final DocumentReference reference = FirebaseFirestore.instance.doc(path);
+  //   // String itemName = cartItem
+  //   final List oldList =
+  //       await reference.get().then((value) => value.data()['cartItems']);
 
-    List updatedList = oldList.map(
-      (element) {
-        // return element;
-        if (element['cookUid'] == id) {
-          return cartItem;
-        } else
-          return element;
-      },
-    ).toList();
-    // print(updatedList);
+  //   List updatedList = oldList.map(
+  //     (element) {
+  //       // return element;
+  //       if (element['cookUid'] == id) {
+  //         return cartItem;
+  //       } else
+  //         return element;
+  //     },
+  //   ).toList();
+  //   // print(updatedList);
 
-    reference.update({
-      'cartItems': updatedList,
-    });
+  //   reference.update({
+  //     'cartItems': updatedList,
+  //   });
 
-    // print(oldList.where((item) => item.id['$id']));
-    //  oldList.where((item) => false)
-  }
+  //   // print(oldList.where((item) => item.id['$id']));
+  //   //  oldList.where((item) => false)
+  // }
 
   // Listening to the cartItemList stream
   @override
@@ -339,13 +325,4 @@ class FirebaseDatabase implements Database {
       }).toList();
     });
   }
-
-//  Returning that one primary item stream
-  // @override
-  // Stream<Item> primaryFoodItem(Cook cook) {
-
-  //   // String path = 'cooks/'
-  //   final reference = FirebaseFirestore.instance.doc('cooks/');
-  // }
-
 }
