@@ -1,6 +1,6 @@
 class APIPath {
   static String addCook(String uid) {
-    return "cooks/$uid";
+    return "customer/$uid";
   }
 
   static String addItem(String uid) {
@@ -8,7 +8,7 @@ class APIPath {
   }
 
   static String getUserName(String uid) {
-    return "/cooks/$uid/";
+    return "/customer/$uid/";
   }
 
   static String getOrdersReceived(String uid) {

@@ -1,10 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:phnauthnew/screens/home/ordersHistoryPage.dart';
-import 'package:phnauthnew/screens/home/ordersReceivedPage.dart';
-import 'package:phnauthnew/screens/menu%20page/menuPage.dart';
+import 'package:phnauthnew/modals/cook.dart';
+import 'package:phnauthnew/screens/cart%20page/cartPage.dart';
+
 import 'package:phnauthnew/screens/services/authService.dart';
 import 'package:phnauthnew/screens/services/databaseService.dart';
+import 'package:phnauthnew/screens/widgets/cookCard.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatelessWidget {
@@ -14,6 +15,42 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final database = Provider.of<Database>(context);
 
+    var streamBuilder = StreamBuilder(
+      stream: FirebaseFirestore.instance.doc('customer/$uid').snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return Column(
+            children: [
+              Text(
+                'Lets eat food, ${snapshot.data['name']}',
+              ),
+            ],
+          );
+        } else
+          return Text('Loading');
+      },
+    );
+    var streamBuilder2 = StreamBuilder<List<Cook>>(
+        stream: database.availableCooks(),
+        builder: (context, snapshot) {
+          if (snapshot.data != null) {
+            List<Cook> listOfCooks = snapshot.data;
+            List children = listOfCooks
+                .map((cook) => CookCard(
+                      cook: cook,
+                      database: database,
+                      context: context,
+                    ))
+                .toList();
+            return Expanded(
+              child: ListView(
+                children: children,
+              ),
+            );
+            // return Text('There is data');
+          }
+          return Text('There is no data');
+        });
     return Scaffold(
       appBar: AppBar(
         title: Text('Home Page'),
@@ -21,51 +58,34 @@ class HomePage extends StatelessWidget {
       ),
       body: Column(
         children: [
-          StreamBuilder(
-            stream: FirebaseFirestore.instance.doc('cooks/$uid').snapshots(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return Column(
-                  children: [
-                    Text(
-                      'Lets make some delicious foood, ${snapshot.data['name']}',
-                    ),
-                  ],
-                );
-              } else
-                return Text('Loading');
-            },
-          ),
+          streamBuilder,
           SizedBox(height: 15),
-          Text('Order Dashboard'),
+          streamBuilder2,
           SizedBox(height: 15),
-          RaisedButton(
-            onPressed: () => _ordersReceivedClicked(context),
-            child: Text('Orders receivedd'),
-          ),
-          SizedBox(height: 15),
-          RaisedButton(
-            onPressed: () => _ordersHistoryClicked(context),
-            child: Text('View order history'),
-          ),
-          SizedBox(height: 15),
-          RaisedButton(
-            onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => Provider<Database>(
-                      create: (context) => FirebaseDatabase(uid: uid),
-                      child: MenuPage(
-                        uid: uid,
-                      )),
-                )),
-            child: Text('View menus'),
-          ),
           RaisedButton(
             onPressed: () => _onSignOut(context),
             child: Text('Sign out'),
-          )
+          ),
+          RaisedButton(
+            onPressed: () => _cartPage(context, database),
+            child: Text('Cart Page'),
+          ),
         ],
+      ),
+    );
+  }
+
+  // Future<void> _availableCooks(BuildContext context) async {
+  //   final database = Provider.of<Database>(context);
+  //   database.availableCooks();
+  // }
+  _cartPage(BuildContext context, Database database) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CartPage(
+          database: database,
+        ),
       ),
     );
   }
@@ -73,29 +93,5 @@ class HomePage extends StatelessWidget {
   Future<void> _onSignOut(BuildContext context) async {
     final auth = Provider.of<AuthBase>(context);
     await auth.signOut();
-  }
-
-  void _ordersReceivedClicked(BuildContext context) {
-    // final path = APIPath.getOrdersReceived(uid);
-    // final CollectionReference reference =
-    //     FirebaseFirestore.instance.collection(path);
-
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => Provider<Database>(
-            create: (context) => FirebaseDatabase(uid: uid),
-            child: OrdersReceivedPage()),
-      ),
-    );
-  }
-
-  void _ordersHistoryClicked(BuildContext context) {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => Provider<Database>(
-                create: (context) => FirebaseDatabase(uid: uid),
-                child: OrdersHistoryPage())));
   }
 }

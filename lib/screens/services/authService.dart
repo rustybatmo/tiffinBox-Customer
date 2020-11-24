@@ -65,7 +65,9 @@ class AuthService implements AuthBase {
       codeSent: (String verificationId, int resendToken) async {
         String smsCode = smscode;
         PhoneAuthCredential phoneAuthCredential = PhoneAuthProvider.credential(
-            verificationId: verificationId, smsCode: smsCode);
+          verificationId: verificationId,
+          smsCode: smsCode,
+        );
         await _auth.signInWithCredential(phoneAuthCredential);
         print(phoneAuthCredential);
       },
