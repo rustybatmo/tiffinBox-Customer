@@ -21,6 +21,12 @@ abstract class Database {
   Stream<List<Cook>> availableCooks();
   // Future<void> updateCartItem(Map cartItem, String id);
   Stream<List<CartItem>> cartItemList();
+  Stream<List<QueryDocumentSnapshot>> getCookMenuStream(String uuid);
+  // Stream<List<String>> getCookMenuStream(String uuid);
+  Future<void> incrementItemCount(CartItem cartItem);
+  Future<void> decrementItemCount(CartItem cartItem);
+  Stream<List<Cook>> getCookDocById(String cookUuid);
+  Stream<List<Cook>> getCook(String cookUuid);
 }
 
 class FirebaseDatabase implements Database {
@@ -83,12 +89,6 @@ class FirebaseDatabase implements Database {
   Future<void> deleteItem(Item aboutToBeDeletedItem, String itemName) async {
     final path = APIPath.addCook(uid);
     final DocumentReference reference = FirebaseFirestore.instance.doc(path);
-
-    //Testing Purpose
-    // List<Item> filteredList =
-    //     items.where((item) => item.typeOfDish != 'nonveg').toList();
-    // print(filteredList[0].itemName);
-    // print(aboutToBeDeletedItem.dishDescription);
 
     //We have got the final list
     List items =
@@ -163,6 +163,8 @@ class FirebaseDatabase implements Database {
   // TIFFINBOX CUSTOMER FUNCTIONS
 
   //List of cooks online
+
+  //refer to this
   @override
   Stream<List<Cook>> availableCooks() {
     final reference = FirebaseFirestore.instance.collection('cooks');
@@ -190,8 +192,7 @@ class FirebaseDatabase implements Database {
     final path = 'customer/$uid/';
     final DocumentReference reference = FirebaseFirestore.instance.doc(path);
 
-    // List cartItems =
-    //     await reference.get().then((snapshot) => snapshot.data()['cartItems']);
+  
     List tempCartItems =
         await reference.get().then((snapshot) => snapshot.data()['cartItems']);
     // reference.update({
@@ -222,7 +223,7 @@ class FirebaseDatabase implements Database {
             itemExist = true;
           }
         });
-        print(itemExist);
+        // print(itemExist);
 
         if (itemExist == true) {
           List newList = tempCartItems.map((item) {
@@ -231,7 +232,7 @@ class FirebaseDatabase implements Database {
             } else
               return item;
           }).toList();
-          print('on the process of updating');
+          // print('on the process of updating');
           reference.update({
             'cartItems': newList,
           });
@@ -243,7 +244,7 @@ class FirebaseDatabase implements Database {
           });
         }
       } else {
-        print('Different cook item is being added');
+        // print('Different cook item is being added');
 
         showDialog(
             context: context,
@@ -274,33 +275,6 @@ class FirebaseDatabase implements Database {
     }
   }
 
-  // @override
-  // Future<void> updateCartItem(Map cartItem, String id) async {
-  //   final path = APIPath.addCook(uid);
-  //   final DocumentReference reference = FirebaseFirestore.instance.doc(path);
-  //   // String itemName = cartItem
-  //   final List oldList =
-  //       await reference.get().then((value) => value.data()['cartItems']);
-
-  //   List updatedList = oldList.map(
-  //     (element) {
-  //       // return element;
-  //       if (element['cookUid'] == id) {
-  //         return cartItem;
-  //       } else
-  //         return element;
-  //     },
-  //   ).toList();
-  //   // print(updatedList);
-
-  //   reference.update({
-  //     'cartItems': updatedList,
-  //   });
-
-  //   // print(oldList.where((item) => item.id['$id']));
-  //   //  oldList.where((item) => false)
-  // }
-
   // Listening to the cartItemList stream
   @override
   Stream<List<CartItem>> cartItemList() {
@@ -324,5 +298,134 @@ class FirebaseDatabase implements Database {
         );
       }).toList();
     });
+  }
+
+  // Stream<List<CartItem>> getCookMenuStream(String uuid) async {
+  //   CollectionReference reference =
+  //       FirebaseFirestore.instance.collection('cooks');
+
+  //   List cookList = await reference.get().then((value) => value.docs);
+
+  //   //return the DOC ID of the cook
+
+  //   String docId = _returnDocId(cookList, uuid);
+  //   DocumentReference documentReference =
+  //       FirebaseFirestore.instance.doc('cooks/$docId');
+  //   List itemList =
+  //       await documentReference.get().then((value) => value.data()['items']);
+  //   // print(itemList);
+  // }
+
+  Stream<List<QueryDocumentSnapshot>> getCookMenuStream(String uuid) {
+    CollectionReference collectionReference =
+        FirebaseFirestore.instance.collection('cooks');
+    final snapshot = collectionReference.snapshots();
+
+    return snapshot.map((snapshot) =>
+        snapshot.docs.where((element) => element.data()['uuid'] == uuid));
+  }
+
+  String _returnDocId(List cookList, String uuid) {
+    String temp = '';
+
+    cookList.forEach((element) {
+      if (element.data()['uuid'] == uuid) {
+        temp = element.id;
+      }
+    });
+    return temp;
+  }
+
+  Future<void> incrementItemCount(CartItem cartItem) async {
+    String path = 'customer/$uid';
+    final DocumentReference documentReference =
+        FirebaseFirestore.instance.doc(path);
+    List tempCartList = await documentReference
+        .get()
+        .then((snapshot) => snapshot.data()['cartItems']);
+
+    // tempCartList.forEach((item) {
+    //   if (item['id'] == cartItem.itemId) {
+    //     item['itemCount'] = ++item['itemCount'];
+    //     print(item['itemCount']);
+    //   }
+    // });
+
+    List incrementedCartList = tempCartList.map((item) {
+      if (item['id'] == cartItem.itemId) {
+        item['itemCount'] = ++item['itemCount'];
+        return item;
+      } else
+        return item;
+    }).toList();
+
+    documentReference.update({
+      'cartItems': incrementedCartList,
+    });
+  }
+
+  Future<void> decrementItemCount(CartItem cartItem) async {
+    String path = 'customer/$uid';
+    final DocumentReference documentReference =
+        FirebaseFirestore.instance.doc(path);
+    List tempCartList = await documentReference
+        .get()
+        .then((snapshot) => snapshot.data()['cartItems']);
+
+    // tempCartList.forEach((item) {
+    //   if (item['id'] == cartItem.itemId) {
+    //     item['itemCount'] = ++item['itemCount'];
+    //     print(item['itemCount']);
+    //   }
+    // });
+
+    List incrementedCartList = tempCartList.map((item) {
+      if (item['id'] == cartItem.itemId) {
+        item['itemCount'] = --item['itemCount'];
+        return item;
+      } else
+        return item;
+    }).toList();
+
+    documentReference.update({
+      'cartItems': incrementedCartList,
+    });
+  }
+
+  @override
+  Stream<List<Cook>> getCookDocById(String cookUuid) {
+    CollectionReference collectionReference =
+        FirebaseFirestore.instance.collection('cooks');
+    final snapshot = collectionReference.snapshots();
+    return snapshot.map((snapshot) => snapshot.docs
+        .where((element) => element.data()['uuid'] == cookUuid)
+        .map((cook) => Cook(
+              name: cook['name'],
+              status: cook['status'],
+              uuid: cook['uuid'],
+              menuItems: cook['items'],
+            ))
+        .toList());
+  }
+
+  @override
+  Stream<List<Cook>> getCook(String cookUuid) {
+    final reference = FirebaseFirestore.instance.collection('cooks');
+    final snapshot = reference.snapshots();
+
+    // print(reference);
+    return snapshot.map((snapshot) => snapshot.docs
+        .where((element) => element.data()['uuid'] == cookUuid)
+        .map(
+          (cook) => Cook(
+            name: cook['name'],
+            phoneNumber: cook['phoneNumber'],
+            emailAddress: cook['emailAddress'],
+            status: cook['status'],
+            uuid: cook['uuid'],
+            primaryItem: cook['primaryItem'],
+          ),
+        )
+        .toList());
   }
 }

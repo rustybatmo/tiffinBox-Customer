@@ -8,6 +8,7 @@ class Cook {
   String status;
   String uuid;
   Map primaryItem;
+  List menuItems;
   Cook({
     @required this.name,
     @required this.emailAddress,
@@ -15,6 +16,7 @@ class Cook {
     this.status,
     this.uuid,
     this.primaryItem,
+    @required this.menuItems,
   });
 
   Map<String, dynamic> toMap() {

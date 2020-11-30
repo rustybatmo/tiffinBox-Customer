@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:phnauthnew/modals/cartItem.dart';
 import 'package:phnauthnew/screens/services/databaseService.dart';
+import 'package:phnauthnew/screens/widgets/cartCard.dart';
 
 class CartPage extends StatelessWidget {
   CartPage({@required this.database});
@@ -16,16 +17,25 @@ class CartPage extends StatelessWidget {
         stream: database.cartItemList(),
         builder: (context, snapshot) {
           if (snapshot.data != null) {
-            // print(snapshot.data);
             List<CartItem> cartItemList = snapshot.data;
-
-            List children = cartItemList
-                .map((cartItem) => _cartItemCard(cartItem))
+            List<CartCard> children = cartItemList
+                .map((item) => CartCard(
+                          database: database,
+                          cartItem: item,
+                        )
+                    // Column(
+                    //   children: [
+                    //     Text(item.cookName),
+                    //     Text('itemName : ' + item.itemName),
+                    //     Text('Price Per Item : ' + item.pricePerItem),
+                    //     Text('itemCount : ' + item.itemCount.toString()),
+                    //   ],
+                    // ),
+                    )
                 .toList();
             return ListView(
               children: children,
             );
-            // return Text('Data is present');
           }
 
           return Text('Nothing to show');
@@ -35,15 +45,15 @@ class CartPage extends StatelessWidget {
   }
 }
 
-Widget _cartItemCard(CartItem cartItem) {
-  return Column(
-    children: [
-      Text(cartItem.cookName),
-      Text(cartItem.itemCount.toString()),
-      Text(cartItem.pricePerItem),
-      Text(
-        'Total price:  ${(cartItem.itemCount * int.parse(cartItem.pricePerItem)).toString()}',
-      ),
-    ],
-  );
-}
+// Widget _cartItemCard(CartItem cartItem) {
+//   return Column(
+//     children: [
+//       Text(cartItem.cookName),
+//       Text(cartItem.itemCount.toString()),
+//       Text(cartItem.pricePerItem),
+//       Text(
+//         'Total price:  ${(cartItem.itemCount * int.parse(cartItem.pricePerItem)).toString()}',
+//       ),
+//     ],
+//   );
+// }
