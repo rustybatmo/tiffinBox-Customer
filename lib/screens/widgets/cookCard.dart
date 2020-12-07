@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:phnauthnew/icons/border_minus.dart';
 import 'package:phnauthnew/modals/cook.dart';
 import 'package:phnauthnew/modals/item.dart';
+import 'package:phnauthnew/screens/profile/profilePage.dart';
+import 'package:phnauthnew/screens/widgets/cookProfilePageItemCard.dart';
 import 'package:phnauthnew/screens/services/databaseService.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
 
@@ -71,7 +73,16 @@ class _CookCardState extends State<CookCard> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       InkWell(
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ProfilePage(
+                                  cookUuid: widget.cook.uuid,
+                                  database: widget.database,
+                                ),
+                              ));
+                        },
                         child: Row(
                           children: [
                             Align(
@@ -367,6 +378,5 @@ class _CookCardState extends State<CookCard> {
       'status': cook.primaryItem['status'],
     };
     database.addCartItem(cartItem, context);
-    // print(cartItem);
   }
 }

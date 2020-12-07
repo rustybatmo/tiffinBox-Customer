@@ -21,17 +21,22 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.indigo,
         ),
-        home: LandingPage(
-          phoneNumber: null,
-          personalDetailsProvided: false,
-        ),
+        initialRoute: '/home',
+        routes: {
+          '/home': (context) => LandingPage(
+                personalDetailsProvided: false,
+                phoneNumber: null,
+              ),
+        },
+        // home: LandingPage(
+        //   phoneNumber: null,
+        //   personalDetailsProvided: false,
+        // ),
         // home: Search(),
       ),
     );
   }
 }
-
-
 
 // class Search extends StatelessWidget {
 //   @override
