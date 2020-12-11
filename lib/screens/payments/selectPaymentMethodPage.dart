@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_progress_dialog/flutter_progress_dialog.dart';
 import 'package:phnauthnew/screens/payments/chosenCard.dart';
 import 'package:phnauthnew/screens/payments/orderSummaryPage.dart';
 import 'package:phnauthnew/screens/payments/paymentCard.dart';
+import 'package:phnauthnew/screens/services/databaseService.dart';
 import 'package:phnauthnew/screens/services/paymentService.dart';
 
 class SelectPaymentMethodPage extends StatefulWidget {
-  SelectPaymentMethodPage({@required this.totalPrice});
+  SelectPaymentMethodPage({@required this.totalPrice, @required this.database});
+  final Database database;
+
   final String totalPrice;
 
   @override
@@ -26,7 +30,7 @@ class _SelectPaymentMethodPageState extends State<SelectPaymentMethodPage> {
     {
       'cardNumber': '3566002020360505',
       'expiryDate': '04/23',
-      'cardHolderName': 'anjali',
+      'cardHolderName': 'Raghul',
       'cvvCode': '424',
       'showBackView': false,
     }
@@ -86,7 +90,7 @@ class _SelectPaymentMethodPageState extends State<SelectPaymentMethodPage> {
                             ),
                             SizedBox(width: 5.0),
                             Text(
-                              '₹ 140',
+                              '₹ ${widget.totalPrice}',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 16.0,
@@ -108,7 +112,7 @@ class _SelectPaymentMethodPageState extends State<SelectPaymentMethodPage> {
                     var card = cards[index];
                     return InkWell(
                       onTap: () {
-                        _payViaExistingCard(card, context);
+                        _payViaExistingCard(card, context, widget.totalPrice);
                       },
                       child: PaymentCard(
                         card: card,
@@ -171,14 +175,15 @@ class _SelectPaymentMethodPageState extends State<SelectPaymentMethodPage> {
                         // Navigator.push(
                         //     context,
                         //     MaterialPageRoute(
-                        //         builder: (context) => OrderSummary()));
+                        //         builder: (context) => OrderSummaryPage(database: widget.database,card: ,)));
                       },
                       child: Text(
                         'SELECT PAYMENT',
                         style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 0.5),
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 0.5,
+                        ),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -193,23 +198,26 @@ class _SelectPaymentMethodPageState extends State<SelectPaymentMethodPage> {
   }
 
   _addNewCard(BuildContext context) async {
+    showProgressDialog(context: context, loadingText: 'Loading');
     final StripeTransactionResponse response =
-        await StripeService.payWithNewCard();
-    print(response);
+        await StripeService.payWithNewCard(amount: '14000', currency: 'inr');
+    dismissProgressDialog();
     if (response.success == true) {
       globalKey.currentState.showSnackBar(SnackBar(
         content: Text(response.message),
-        duration: new Duration(milliseconds: 50000),
+        duration: new Duration(milliseconds: 2500),
       ));
     }
   }
 
-  _payViaExistingCard(card, BuildContext context) {
+  _payViaExistingCard(card, BuildContext context, String totalPrice) {
     Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => OrderSummaryPage(
             card: card,
+            database: widget.database,
+            totalPrice: totalPrice,
           ),
         ));
   }

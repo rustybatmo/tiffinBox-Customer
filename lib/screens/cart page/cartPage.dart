@@ -43,16 +43,6 @@ class _CartPageState extends State<CartPage> {
                               cartItem: item,
                             ))
                         .toList();
-                    // print(children[0].cartItem.pricePerItem);
-                    // int totalPrice = 0;
-                    // children.forEach((element) {
-                    //   totalPrice = totalPrice +
-                    //       int.parse(element.cartItem.pricePerItem) *
-                    //           element.cartItem.itemCount;
-
-                    // });
-                    // print(totalPrice);
-
                     return ListView(
                       children: children,
                     );
@@ -62,8 +52,6 @@ class _CartPageState extends State<CartPage> {
                 },
               ),
             ),
-
-            // Text('400'),
             Flexible(
               child: StreamBuilder<List<CartItem>>(
                 stream: widget.database.cartItemList(),
@@ -101,6 +89,7 @@ class _CartPageState extends State<CartPage> {
                                       builder: (context) =>
                                           SelectPaymentMethodPage(
                                             totalPrice: totalPrice.toString(),
+                                            database: widget.database,
                                           )));
                             },
                             child: Text('Proceed to Payment'),

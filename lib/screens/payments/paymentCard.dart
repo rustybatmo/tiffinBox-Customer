@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 
 class PaymentCard extends StatefulWidget {
-  PaymentCard(
-      {@required this.card, @required this.index, @required this.isSelected});
+  PaymentCard({@required this.card});
   final Map<String, dynamic> card;
-  final int index;
-  final bool isSelected;
+
   @override
   _PaymentCardState createState() => _PaymentCardState();
 }
@@ -38,7 +36,6 @@ class _PaymentCardState extends State<PaymentCard> {
             border: isSelected == true
                 ? Border.all(color: Colors.red, width: 2.0)
                 : null,
-            // border: null,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -58,7 +55,10 @@ class _PaymentCardState extends State<PaymentCard> {
                 child: Text(
                   widget.card['cardHolderName'],
                   style: TextStyle(
-                      color: Colors.white, letterSpacing: 0.5, fontSize: 12.0),
+                    color: Colors.white,
+                    letterSpacing: 0.5,
+                    fontSize: 12.0,
+                  ),
                 ),
               ),
               Padding(

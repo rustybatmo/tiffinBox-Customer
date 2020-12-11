@@ -32,6 +32,9 @@ dependencies:
   curved_navigation_bar: ^0.3.1
   smooth_star_rating: ^1.1.1
   stripe_payment: ^1.0.9
+  http: ^0.11.0
+  flutter_progress_dialog: ^0.1.0
+  google_maps_flutter: ^1.0.6
 
 dev_dependencies:
   flutter_test:

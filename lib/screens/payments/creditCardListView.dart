@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:phnauthnew/screens/payments/paymentCard.dart';
+import 'package:phnauthnew/screens/services/paymentService.dart';
 
 class CreditCardListView extends StatefulWidget {
   @override
@@ -26,11 +27,11 @@ class _CreditCardListViewState extends State<CreditCardListView> {
       }
     ];
     List cardWidgets = cards.map((card) {
-      var index = cards.indexOf(card);
+      // var index = cards.indexOf(card);
       return PaymentCard(
         card: card,
-        index: index,
-        isSelected: false,
+        // index: index,
+        // isSelected: false,
       );
     }).toList();
     return Padding(
