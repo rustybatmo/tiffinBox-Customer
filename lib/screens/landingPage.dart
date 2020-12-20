@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoder/model.dart';
 import 'package:phnauthnew/screens/home/homePage.dart';
 import 'package:phnauthnew/screens/personalDetails.dart';
 import 'package:phnauthnew/screens/phone_auth/phonePage.dart';
@@ -9,8 +11,15 @@ import 'package:provider/provider.dart';
 class LandingPage extends StatefulWidget {
   final String phoneNumber;
   final bool personalDetailsProvided;
-  LandingPage(
-      {@required this.phoneNumber, @required this.personalDetailsProvided});
+  final GeoPoint geoPoint;
+  // final Coordinates coordinates;
+  final Address address;
+  LandingPage({
+    @required this.phoneNumber,
+    @required this.personalDetailsProvided,
+    @required this.address,
+    @required this.geoPoint,
+  });
 
   @override
   _LandingPageState createState() => _LandingPageState();

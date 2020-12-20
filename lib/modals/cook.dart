@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:uuid/uuid.dart';
 
 class Cook {
@@ -7,8 +9,13 @@ class Cook {
   String phoneNumber;
   String status;
   String uuid;
+  // Position position;
   Map primaryItem;
   List menuItems;
+  // double latitude;
+  // double longitude;
+  GeoPoint geoPoint;
+
   Cook({
     @required this.name,
     @required this.emailAddress,
@@ -17,6 +24,9 @@ class Cook {
     this.uuid,
     this.primaryItem,
     @required this.menuItems,
+    // @required this.latitude,
+    // @required this.longitude,
+    @required this.geoPoint,
   });
 
   Map<String, dynamic> toMap() {
@@ -26,6 +36,9 @@ class Cook {
       "phoneNumber": phoneNumber,
       "status": "online",
       "uuid": uuid,
+      // "latitude": latitude,
+      // "longitude": longitude,
+      'geoPoint': geoPoint,
     };
   }
 }

@@ -3,6 +3,7 @@ import 'package:phnauthnew/modals/cook.dart';
 import 'package:phnauthnew/screens/landingPage.dart';
 import 'package:phnauthnew/screens/services/databaseService.dart';
 import 'package:provider/provider.dart';
+import 'package:phnauthnew/screens/googleMaps/chooseLocation.dart';
 
 class PersonalDetails extends StatelessWidget {
   PersonalDetails({
@@ -84,22 +85,26 @@ class PersonalDetails extends StatelessWidget {
   void _submitCookDetails(BuildContext context) async {
     if (_formKey.currentState.validate()) {
       // print("It is valid");
-      final Cook cook = Cook(
-          emailAddress: _emailController.text,
-          phoneNumber: phoneNumber,
-          name: _nameController.text);
-      Map<String, dynamic> cookDataInMapFormat = cook.toMap();
-      print(cookDataInMapFormat);
+      // final Cook cook = Cook(
+      //     emailAddress: _emailController.text,
+      //     phoneNumber: phoneNumber,
+      //     name: _nameController.text);
+      // Map<String, dynamic> cookDataInMapFormat = cook.toMap();
+      // print(cookDataInMapFormat);
       final database = Provider.of<Database>(context);
-      await database.addCook(cookDataInMapFormat);
+      // await database.addCook(cookDataInMapFormat);
+      
 
-      // LandingPage();
       Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => LandingPage(
+            builder: (context) => ChooseLocation(
               phoneNumber: phoneNumber,
               personalDetailsProvided: true,
+              database: database,
+              emailAddress: _emailController.text,
+              customerName: _nameController.text,
+              
             ),
           ));
     } else {

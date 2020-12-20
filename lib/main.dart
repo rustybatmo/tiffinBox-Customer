@@ -1,6 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:phnauthnew/screens/googleMaps/chooseLocation.dart';
 import 'package:phnauthnew/screens/landingPage.dart';
+import 'package:phnauthnew/screens/placesAutocomplete.dart';
 import 'package:phnauthnew/screens/services/authService.dart';
 import 'package:provider/provider.dart';
 
@@ -21,18 +23,13 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.indigo,
         ),
-        initialRoute: '/home',
-        routes: {
-          '/home': (context) => LandingPage(
-                personalDetailsProvided: false,
-                phoneNumber: null,
-              ),
-        },
-        // home: LandingPage(
-        //   phoneNumber: null,
-        //   personalDetailsProvided: false,
-        // ),
-        // home: Search(),
+        home: LandingPage(
+          personalDetailsProvided: false,
+          phoneNumber: null,
+          address: null,
+          geoPoint: null,
+        ),
+        // home: PlacesAutocompletePage(),
       ),
     );
   }

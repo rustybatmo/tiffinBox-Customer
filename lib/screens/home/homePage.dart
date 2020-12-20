@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({@required this.uid});
+
   final uid;
   @override
   Widget build(BuildContext context) {

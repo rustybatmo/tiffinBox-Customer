@@ -39,7 +39,10 @@ class FirebaseDatabase implements Database {
   Future<void> addCook(Map<String, dynamic> cook) async {
     final path = APIPath.addCook(uid);
     final DocumentReference reference = FirebaseFirestore.instance.doc(path);
-    await reference.update(cook);
+    print('this is it');
+    print(cook);
+    print('end');
+    await reference.set(cook);
   }
 
   //(Adding/appending elements to the 'items' array
@@ -192,7 +195,6 @@ class FirebaseDatabase implements Database {
     final path = 'customer/$uid/';
     final DocumentReference reference = FirebaseFirestore.instance.doc(path);
 
-  
     List tempCartItems =
         await reference.get().then((snapshot) => snapshot.data()['cartItems']);
     // reference.update({
